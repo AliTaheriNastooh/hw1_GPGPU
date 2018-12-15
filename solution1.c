@@ -151,12 +151,13 @@ void* producer(void *arg) {
 			head = (head + 1)%BUF_SIZE;
 			len++;
 			pthread_mutex_lock(&mutex_buf[lastHead]);
-        	pthread_cond_signal(&can_consume);
+//        	pthread_cond_signal(&can_consume);
         	pthread_mutex_unlock(&mutex);
 	        for(int j=0;j<CHUNK_SIZE+1;j++){	
 			buf[lastHead].data[j]=encode[j];
 			}
 			buf[lastHead].id=i;
+        	pthread_cond_signal(&can_consume);
 			pthread_mutex_unlock(&mutex_buf[lastHead]);
 	}
 	if(id ==num_thread-1){//if number of character in input doesnt divisible by chunk size
@@ -216,12 +217,13 @@ void* consumer(void *arg) {
         tail = (tail + 1)%BUF_SIZE;
 		len--;	
 		pthread_mutex_lock(&mutex_buf[lastTail]);
-		pthread_cond_signal(&can_produce);
+//		pthread_cond_signal(&can_produce);
         pthread_mutex_unlock(&mutex);
 		packetId=buf[lastTail].id;
 		for(int j=0;j<CHUNK_SIZE+1;j++){
 			tmp[j]=buf[lastTail].data[j];
 		}
+		pthread_cond_signal(&can_produce);
 		pthread_mutex_unlock(&mutex_buf[lastTail]);
 		decrypt(tmp,decode);
 		local_buf[counter].id=packetId;//keep this decode file that finally main thread write it in output array
