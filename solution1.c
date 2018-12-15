@@ -246,6 +246,21 @@ void validate(char* a,char *b,int size){
 	}
 	printf("complete equal\n");
 }
+int readFile(char* input,FILE* file_path){
+
+	int c;
+	int count=0;
+	fseek(file_path,0L,SEEK_END);
+	int size=ftell(file_path);
+	input=(char*)malloc((size+2)*sizeof(char));
+	fseek(file_path,0L,SEEK_SET);
+	while((c=getc(file_path))!=EOF){
+		input[count]=c;
+		count++;
+	}
+	fclose(file_path);
+	return size;
+}
 int main(int argc,char* argv[]){
 	struct timeval start, end;
 			
@@ -257,9 +272,10 @@ int main(int argc,char* argv[]){
 	char* path=argv[2];
 	FILE* file_path;
 	file_path=fopen(path,"r");
+	char *input;
+
 	int c;
 	int count=0;
-	char *input;
 	fseek(file_path,0L,SEEK_END);
 	int size=ftell(file_path);
 	input=(char*)malloc((size+2)*sizeof(char));
